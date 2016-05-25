@@ -1,0 +1,29 @@
+# Using putty 
+# Initial Checks 
+
+Check if we are using correct OS
+
+   <cat /etc/issue or cat /etc/redhat-release>
+
+Check with the hostname: 
+
+// check the hostname using 
+
+hostname -f
+
+// change the hostname 
+
+hostname <FQDN> 
+
+//change the hostname in the newtwork
+
+nano /etc/sysconfig/network
+
+// map the internal ip and hostname in hosts file
+
+nano /etc/hosts 
+
+//to verify ping the other nodes and see whether it is able to send the heartbeats to the other nodes
+
+
+  
