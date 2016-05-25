@@ -1,9 +1,0 @@
-cd /etc/yum.repos.d/
-wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.2.1.0/ambari.repo
-
-// check the version of the ambari that you are downloading. in future while launching the wizard, choose your HDP Repo keeping in mind 
-as to which version is compatible with your Ambari Version
-
-Also , in the install wizard , you can change the link related to your repo file to indicate another version of Ambari . For e.g. (as it 
-stands now) , the latest version of HDP 2.2 is 2.2.8 , but if I want 2.2.6 , I can change that link and instead of 2.2.8 , substitute 
-it with 2.2.6 and the installation will go through.

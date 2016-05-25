@@ -1,0 +1,101 @@
+cd /etc/yum.repos.d/
+wget http://public-repo-1.hortonworks.com/ambari/centos6/2.x/updates/2.2.1.0/ambari.repo
+
+// check the version of the ambari that you are downloading. in future while launching the wizard, choose your HDP Repo keeping in mind 
+as to which version is compatible with your Ambari Version
+
+Also , in the install wizard , you can change the link related to your repo file to indicate another version of Ambari . For e.g. (as it 
+stands now) , the latest version of HDP 2.2 is 2.2.8 , but if I want 2.2.6 , I can change that link and instead of 2.2.8 , substitute 
+it with 2.2.6 and the installation will go through.
+
+// Then install ambari-server in the master node
+
+yum install ambari-server
+
+// Ambari-agent in all the nodes
+
+yum install ambari-agent
+
+// Now set up the ambari
+
+ambari-server setup -j <path to jdk>
+
+// path to jdk is easy to find when put "which java" it will give you the path where we installed the java.
+
+ambari-server setup -j /usr/java/latest/ 
+
+// The following is basically the process of setting up the ambari
+
+ Using python /usr/bin/python2.6
+ Setup ambari-server
+ Checking SELinux...
+ SELinux status is 'disabled'
+ Customize user account for ambari-server daemon [y/n] (n)?
+ Adjusting ambari-server permissions and ownership...
+ Checking firewall status...
+ WARNING: iptables is running. Confirm the necessary Ambari ports are accessible. Refer to the Ambari documentation for more details on ports.
+ OK to continue [y/n] (y)?
+ Checking JDK...
+ [1] OpenJDK 1.8.0
+ [2] OpenJDK 1.7.0 (deprecated)
+ [3] Custom JDK
+ ==============================================================================
+ Enter choice (1):
+ Downloading JDK from http://birepo-build.svl.ibm.com/repos/IOP-UTILS/RHEL6/x86_64/1.1/openjdk/jdk-1.8.0.tar.gz to /var/lib/ambari-server/resources/jdk-1.8.0.tar.gz
+ jdk-1.8.0.tar.gz... 100% (56.5 MB of 56.5 MB)
+ Successfully downloaded JDK distribution to /var/lib/ambari-server/resources/jdk-1.8.0.tar.gz
+ Installing JDK to /usr/jdk64/
+ Successfully installed JDK to /usr/jdk64/
+ Completing setup...
+ Configuring database...
+ Enter advanced database configuration [y/n] (n)? y
+ Configuring database...
+ ==============================================================================
+ Choose one of the following options:
+ [1] - PostgreSQL (Embedded)
+ [2] - Oracle
+ [3] - MySQL
+ [4] - PostgreSQL
+ ==============================================================================
+ Enter choice (1): 3
+ Hostname (localhost): host // host where the mysql is installed 
+ Port (3306): 3306 // enter
+ Database name (ambari): amabri //databasename
+ Username (ambari): ambari // username and the password
+ Enter Database Password (bigdata): amabri
+ Re-enter password: ambari
+ Configuring ambari database...
+ Copying JDBC drivers to server resources...
+ Configuring remote database connection properties...
+ WARNING: Before starting Ambari Server, you must run the following DDL against the database to create the schema: /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql
+ Proceed with configuring remote database connection properties [y/n] (y)? y
+ Extracting system views...
+ ....ambari-admin-2.1.0_IBM_5.jar
+ .
+ Adjusting ambari-server permissions and ownership...
+ Ambari Server 'setup' completed successfully.
+ 
+ // now we need to go to mysql and connect the database 
+ 
+ mysql -uambari -pambari
+ create databses amabri;
+ use amabri;
+ /var/lib/ambari-server/resources/Ambari-DDL-MySQL-CREATE.sql
+
+// now exported all the tables to the ambari database. 
+
+// Finally, ensure that the MySQL driver is available to Ambari and the Hadoop cluster.On the node running Ambari server, issue the 
+following command 
+
+ambari-server setup --jdbc-db=mysql --jdbc-driver=/usr/share/java/mysql-connector-java.jar
+
+ALL done !! 
+
+Now start the amabari using the command 
+
+sudo service ambari-server start
+sudo service ambari-agent start (in all the nodes)
+
+NOTE : On all datanode, change HostName to ambari-server hostname
+
+nano /etc/ambari-agent/conf/ambari-agent.ini 
