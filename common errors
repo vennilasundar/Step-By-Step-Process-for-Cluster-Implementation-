@@ -1,0 +1,31 @@
+Error:
+25 May 2016 11:00:57,348 ERROR [qtp-client-26] AbstractResourceProvider:280 - Caught AmbariException when creating a resource
+org.apache.ambari.server.HostNotFoundException: Host not found, hostname=cloudwick2.com
+
+The hosts cannot be registered with the above error
+
+Solution:
+
+Yum upgrade openssl on the node
+identify the ambari-agent process running and kill it. Then restart the ambari-agent
+cat /var/run/ambari-agent/ambari-agent.pid
+kill -9 pid
+
+NOTE : 
+
+nano /etc/ambari-server/conf/password.dat 
+// check the database password
+
+nano /etc/ambari-server/conf/ambari.properties
+// check the properties
+
+Do the ntp restart if the server is rebooted.
+common commands : 
+
+
+service mysqld status
+ntpstat
+sestatus
+cat /sys/kernel/mm/transparent_hugepage/enabled
+cat /proc/sys/vm/swappiness
+sudo service iptables status
