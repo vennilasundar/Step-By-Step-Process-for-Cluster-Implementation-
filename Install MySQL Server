@@ -104,4 +104,6 @@ pid-file=/var/run/mysqld/mysqld.pid
 
 // then save it.
 
+Then install the mysql connector java in all the nodes
 
+yum install mysql-connector-java
