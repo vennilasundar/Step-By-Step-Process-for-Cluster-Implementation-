@@ -1,0 +1,107 @@
+// Install and configure the server 
+
+yum -y install mysql-server
+service mysqld start
+mysql_secure_installation 
+
+the above step would require more configuration 
+
+Enter current password for root (enter for none): press enter
+
+Set root password? [Y/n] y
+
+// set new password and reenter new password
+ 
+Remove anonymous users? [Y/n] y
+Disallow root login remotely? [Y/n] n
+Remove test database and access to it? [Y/n] y
+Reload privilege tables now? [Y/n] y
+
+// This is for creating the user for ambari this is same for hive and oozie
+
+CREATE USER 'ambari'@'localhost' IDENTIFIED BY 'ambari';
+GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'localhost' with grant option;
+CREATE USER 'ambari'@'%' IDENTIFIED BY 'ambari';
+GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'%' with grant option;
+CREATE USER 'ambari'@'node1.cloudwick.com' IDENTIFIED BY 'ambari';
+GRANT ALL PRIVILEGES ON *.* TO 'ambari'@'node1.cloudwick.com' with grant option;
+
+# VERY IMPORTANT
+
+// change the Configuring MySQL > 
+
+go to > /etc/my.cnf
+
+// To make sure mysql instance is accessible from outside the instance, locate [mysqld] section and add/correct as follows so that 
+mysqld can reached remotely
+
+bind-address=[IP_ADDRESS_OF_MYSQL_SERVER]
+
+// Optimizing settings: you need to optimize mysql server otherwise it is going to eat all your CPU and other resources
+
+// put this is below the [mysqld]
+
+[mysqld]
+# binding address
+bind-address=[IP_ADDRESS_OF_MYSQL_SERVER]
+  
+datadir=/var/lib/mysql
+socket=/var/lib/mysql/mysql.sock
+user=mysql
+ 
+# With the READ-COMMITTED isolation level, the phenomenon of dirty read is avoided, 
+# because any uncommitted changes is not visible to any other transaction, until the 
+# change is committed.
+transaction-isolation=READ-COMMITTED
+ 
+ 
+# Disabling symbolic-links is recommended to prevent assorted security risks;
+# to do so, uncomment this line:
+# symbolic-links=0
+ 
+key_buffer              = 16M
+key_buffer_size         = 32M
+max_allowed_packet      = 16M
+thread_stack            = 256K
+thread_cache_size       = 64
+query_cache_limit       = 8M
+query_cache_size        = 64M
+query_cache_type        = 1
+ 
+ 
+# Important: see Configuring the Databases and Setting max_connections
+max_connections         = 550
+ 
+ 
+# Important: log-bin should be on a disk with enough free space
+# Enable binary logging. The server logs all statements that change data to the 
+# binary log, which is used for backup and replication.
+log-bin=/var/lib/mysql/logs/binary/mysql_binary_log
+ 
+ 
+# For MySQL version 5.1.8 or later. Comment out binlog_format for older versions.
+binlog_format = mixed
+read_buffer_size = 2M
+read_rnd_buffer_size = 16M
+sort_buffer_size = 8M
+join_buffer_size = 8M
+ 
+ 
+# InnoDB settings
+default-storage_engine = InnoDB
+innodb_file_per_table = 1
+innodb_flush_log_at_trx_commit  = 2
+innodb_log_buffer_size          = 64M
+innodb_buffer_pool_size         = 4G
+innodb_thread_concurrency       = 8
+innodb_flush_method             = O_DIRECT
+innodb_log_file_size = 512M
+ 
+ 
+[mysqld_safe]
+log-error=/var/log/mysqld.log
+pid-file=/var/run/mysqld/mysqld.pid
+
+// then save it.
+
+
