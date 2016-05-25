@@ -1,0 +1,16 @@
+// Following is link to install java 1.8: 
+
+http://tecadmin.net/install-java-8-on-centos-rhel-and-fedora/#
+
+STEPS
+
+cd opt
+wget --no-check-certificate --no-cookies --header "Cookie:oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/7u45-b18/jdk-7u45-linux-x64.rpm -O jdk-7u45-linux-x64.rpm
+rpm -ivh jdk- <do tab here>
+alternatives --install /usr/bin/java java /usr/java/jdk1.7.0_79/bin/java 200000
+
+// check whether the java is installed 
+
+java -version
+
+// also do <which java> comment for the path where the JDK is installed. it will be useful when you are setting uo the ambari.
