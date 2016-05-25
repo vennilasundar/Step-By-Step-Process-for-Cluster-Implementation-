@@ -1,0 +1,76 @@
+# Install wget, unzip, curl, tar using commands 
+
+yum -y install wget
+yum -y install curl
+yum -y install tar
+
+#Firewall setting 
+
+# stop the iptables 
+// Save present firewall configuration go to > /etc/sysconfig/iptables
+
+sudo iptables-save
+sudo service iptables stop
+sudo chkconfig iptables off
+sudo service iptables status
+
+# same for ip6tables
+
+service ip6tables stop
+chkconfig ip6tables off
+service ip6tables status
+
+# SElinux
+
+go to > /etc/selinux/config
+
+// change > SELINUX=enforcing/SELINUX=disabled/ and check the status using the command > sestatus
+
+# check if transparent huge pages have been disabled
+
+go to > /etc/rc.local 
+
+// put this 
+
+if test -f /sys/kernel/mm/transparent_hugepage/enabled; then
+echo never > /sys/kernel/mm/transparent_hugepage/enabled
+fi
+if test -f /sys/kernel/mm/transparent_hugepage/defrag; then
+echo never > /sys/kernel/mm/transparent_hugepage/defrag
+fi
+
+// to check the transperent huge pages 
+
+cat /sys/kernel/mm/transparent_hugepage/enabled
+// should show as always madvise [never]
+
+grep -i HugePages_Total /proc/meminfo 
+// HugePages_Total: 0
+
+# VMswapiness
+
+// To disable swappiness
+
+ go to > /etc/sysctl.conf
+ 
+sysctl -w vm.swappiness=0
+echo 0 > /proc/sys/vm/swappiness 
+
+# set the u limit to 10000
+
+ulimit -n 10000
+
+# install ntp 
+
+yum -y install ntp
+ntpdate 0.centos.pool.ntp.org
+service ntpd start
+ntpstat
+
+// check if it synchronised if its not synchronised restart the service
+
+# upgrade openssl
+
+yum upgrade openssl
+
+
